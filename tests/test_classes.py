@@ -1,3 +1,5 @@
+import unittest
+
 from src.classes import Category, Product
 
 
@@ -52,3 +54,56 @@ def test_multiple_categories():
     assert Category.product_count == 4  # Проверка общего количества продуктов
     assert category1.product_count == 3  # Проверка количества продуктов в первой категории
     assert category2.product_count == 1  # Проверка количества продуктов во второй категории
+
+
+class TestProductCategory(unittest.TestCase):
+    """Тестовый класс для проверки функциональности классов Product и Category"""
+    def test_add_product(self):
+        """Проверяет добавление продукта в категорию."""
+        category = Category("Тестовая категория", "Описание категории")
+        product = Product("Тестовый продукт", "Описание продукта", 100.0, 10)
+        category.add_product(product)
+        self.assertEqual(len(category.products), 1)  # Используем геттер для получения продуктов
+
+    def test_products_getter(self):
+        """Проверяет корректность работы геттера для списка продуктов"""
+        category = Category("Тестовая категория", "Описание категории")
+        product1 = Product("Тестовый продукт 1", "Описание продукта 1", 100.0, 10)
+        product2 = Product("Тестовый продукт 2", "Описание продукта 2", 200.0, 5)
+        category.add_product(product1)
+        category.add_product(product2)
+
+        # Форматируем ожидаемый вывод
+        expected_output = [
+            f"{product1.name}, {product1.price} руб. Остаток: {product1.quantity} шт.",
+            f"{product2.name}, {product2.price} руб. Остаток: {product2.quantity} шт."
+        ]
+
+        # Проверяем, что список продуктов соответствует ожидаемому
+        self.assertEqual([f"{p.name}, {p.price} руб. Остаток: {p.quantity} шт." for p in category.products],
+                         expected_output)
+
+    def test_new_product(self):
+        """Проверяет создание нового продукта из словаря"""
+        product_data = {
+            "name": "Тестовый продукт",
+            "description": "Описание тестового продукта",
+            "price": 150.0,
+            "quantity": 20
+        }
+        product = Product.new_product(product_data)
+        self.assertEqual(product.name, "Тестовый продукт")
+        self.assertEqual(product.price, 150.0)
+
+    def test_price_setter(self):
+        """Проверяет работу сеттера для цены продукта"""
+        product = Product("Тестовый продукт", "Описание продукта", 100.0, 10)
+        product.price = -50  # Должно вывести сообщение
+        self.assertEqual(product.price, 100.0)  # Цена не должна измениться
+
+        product.price = 200.0  # Устанавливаем корректную цену
+        self.assertEqual(product.price, 200.0)  # Проверяем, что цена обновилась
+
+
+if __name__ == "__main__":
+    unittest.main()
