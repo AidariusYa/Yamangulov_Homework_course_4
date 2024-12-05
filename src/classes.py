@@ -10,7 +10,7 @@ class Product:
         """
         self.name = name
         self.description = description
-        self._price = price  # Приватный атрибут для цены
+        self.__price = price  # Приватный атрибут для цены
         self.quantity = quantity
 
     def __repr__(self):
@@ -29,7 +29,7 @@ class Product:
 
         :return: Цена продукта.
         """
-        return self._price
+        return self.__price
 
     @price.setter
     def price(self, value: float):
@@ -42,7 +42,7 @@ class Product:
         if value <= 0:
             print("Цена не должна быть нулевая или отрицательная")
         else:
-            self._price = value
+            self.__price = value
 
     @classmethod
     def new_product(cls, product_data: dict):
@@ -83,20 +83,20 @@ class Category:
         """
         Добавляет продукт в категорию.
 
-        :param product: Экземпляр продукта, который нужно добавить.
+        :param product: Класс продукта, который нужно добавить.
         """
         self._products.append(product)  # Добавляем продукт в приватный атрибут
-        self.product_count += 1  # Увеличиваем количество продуктов в категории
         Category.product_count += 1  # Увеличиваем общее количество продуктов
 
     @property
     def products(self):
         """
-        Возвращает список продуктов в категории.
+        Возвращает строку с информацией о продуктах в категории.
 
-        :return: Список продуктов.
+        :return: Строка с информацией о продуктах.
         """
-        return self._products
+        return ", ".join(
+            [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт." for product in self._products])
 
     def __del__(self):
         """Уменьшает счетчики категорий и продуктов при удалении экземпляра категории."""

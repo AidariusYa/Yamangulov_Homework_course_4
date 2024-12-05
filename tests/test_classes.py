@@ -23,9 +23,9 @@ def test_category_initialization():
     assert category.name == "Смартфоны"
     assert category.description == ("Смартфоны, как средство не только коммуникации, но и получения дополнительных "
                                     "функций для удобства жизни")
-    assert len(category.products) == 3
-    assert Category.category_count == 1
-    assert category.product_count == 3  # Проверка количества продуктов в категории
+    assert len(category._products) == 3  # Проверка количества продуктов в категории
+    assert Category.category_count == 1     # Проверка общего количества категорий
+    assert Category.product_count == 3  # Проверка общего количества продуктов
 
 
 def test_product_count_in_category():
@@ -62,8 +62,10 @@ class TestProductCategory(unittest.TestCase):
         """Проверяет добавление продукта в категорию."""
         category = Category("Тестовая категория", "Описание категории")
         product = Product("Тестовый продукт", "Описание продукта", 100.0, 10)
-        category.add_product(product)
-        self.assertEqual(len(category.products), 1)  # Используем геттер для получения продуктов
+        self.assertEqual(category.product_count, 0)  # Используем геттер для получения продуктов
+        category.add_product(product)  # Добавляем продукт в категорию
+        self.assertEqual(Category.product_count, 1)  # Проверяем, что общее количество продуктов на уровне
+        # класса увеличилось на 1
 
     def test_products_getter(self):
         """Проверяет корректность работы геттера для списка продуктов"""
@@ -74,14 +76,13 @@ class TestProductCategory(unittest.TestCase):
         category.add_product(product2)
 
         # Форматируем ожидаемый вывод
-        expected_output = [
-            f"{product1.name}, {product1.price} руб. Остаток: {product1.quantity} шт.",
+        expected_output = (
+            f"{product1.name}, {product1.price} руб. Остаток: {product1.quantity} шт., "
             f"{product2.name}, {product2.price} руб. Остаток: {product2.quantity} шт."
-        ]
+        )
 
-        # Проверяем, что список продуктов соответствует ожидаемому
-        self.assertEqual([f"{p.name}, {p.price} руб. Остаток: {p.quantity} шт." for p in category.products],
-                         expected_output)
+        # Проверяем, что строка продуктов соответствует ожидаемому
+        self.assertEqual(category.products, expected_output)
 
     def test_new_product(self):
         """Проверяет создание нового продукта из словаря"""
