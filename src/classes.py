@@ -59,6 +59,16 @@ class Product:
             quantity=product_data["quantity"]
         )
 
+    def __str__(self):
+        """Возвращает строковое представление продукта."""
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        """Возвращает сумму стоимости двух продуктов."""
+        if isinstance(other, Product):
+            return (self.price * self.quantity) + (other.price * other.quantity)
+        return NotImplemented
+
 
 class Category:
     category_count = 0  # Статический атрибут для общего количества категорий
@@ -97,6 +107,11 @@ class Category:
         """
         return ", ".join(
             [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт." for product in self._products])
+
+    def __str__(self):
+        """Возвращает строковое представление категории."""
+        total_quantity = sum(product.quantity for product in self._products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
 
     def __del__(self):
         """Уменьшает счетчики категорий и продуктов при удалении экземпляра категории."""

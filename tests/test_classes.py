@@ -105,6 +105,27 @@ class TestProductCategory(unittest.TestCase):
         product.price = 200.0  # Устанавливаем корректную цену
         self.assertEqual(product.price, 200.0)  # Проверяем, что цена обновилась
 
+    def test_product_str(self):
+        """Проверяет строковое представление продукта"""
+        product = Product("Тестовый продукт", "Описание продукта", 100.0, 10)
+        self.assertEqual(str(product), "Тестовый продукт, 100.0 руб. Остаток: 10 шт.")
+
+    def test_category_str(self):
+        """Проверяет строковое представление категории"""
+        product1 = Product("Тестовый продукт 1", "Описание продукта 1", 100.0, 10)
+        product2 = Product("Тестовый продукт 2", "Описание продукта 2", 200.0, 5)
+        category = Category("Тестовая категория", "Описание категории", [product1, product2])
+        self.assertEqual(str(category), "Тестовая категория, количество продуктов: 15 шт.")
+
+    def test_product_addition(self):
+        """Проверяет сложение двух продуктов"""
+        product1 = Product("Тестовый продукт 1", "Описание продукта 1", 100.0, 10)
+        product2 = Product("Тестовый продукт 2", "Описание продукта 2", 200.0, 5)
+
+        # Ожидаемая стоимость: (100 * 10) + (200 * 5) = 1000 + 1000 = 2000
+        total_value = product1 + product2
+        self.assertEqual(total_value, 2000)
+
 
 if __name__ == "__main__":
     unittest.main()
