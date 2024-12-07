@@ -59,15 +59,46 @@ class Product:
             quantity=product_data["quantity"]
         )
 
+    def __add__(self, other):
+        """Возвращает сумму стоимости двух продуктов."""
+        if not isinstance(other, Product):
+            return NotImplemented
+        if not isinstance(self, type(other)):
+            raise TypeError("Нельзя складывать продукты разных типов")
+        return (self.price * self.quantity) + (other.price * other.quantity)
+
     def __str__(self):
         """Возвращает строковое представление продукта."""
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
-    def __add__(self, other):
-        """Возвращает сумму стоимости двух продуктов."""
-        if isinstance(other, Product):
-            return (self.price * self.quantity) + (other.price * other.quantity)
-        return NotImplemented
+
+class Smartphone(Product):
+    def __init__(self, name: str, description: str, price: float, quantity: int,
+                 efficiency: float, model: str, memory: int, color: str):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+    def __repr__(self):
+        return (f"Smartphone(name={self.name}, description={self.description}, price={self.price}, "
+                f"quantity={self.quantity}, efficiency={self.efficiency}, model={self.model}, "
+                f"memory={self.memory}, color={self.color})")
+
+
+class LawnGrass(Product):
+    def __init__(self, name: str, description: str, price: float, quantity: int,
+                 country: str, germination_period: str, color: str):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
+
+    def __repr__(self):
+        return (f"LawnGrass(name={self.name}, description={self.description}, price={self.price}, "
+                f"quantity={self.quantity}, country={self.country}, "
+                f"germination_period={self.germination_period}, color={self.color})")
 
 
 class Category:
@@ -89,12 +120,14 @@ class Category:
         Category.category_count += 1
         Category.product_count += self.product_count  # Увеличиваем общее количество продуктов
 
-    def add_product(self, product: Product):
+    def add_product(self, product):
         """
         Добавляет продукт в категорию.
 
         :param product: Класс продукта, который нужно добавить.
         """
+        if not isinstance(product, Product):
+            raise TypeError("Можно добавлять только продукты")
         self._products.append(product)  # Добавляем продукт в приватный атрибут
         Category.product_count += 1  # Увеличиваем общее количество продуктов
 
