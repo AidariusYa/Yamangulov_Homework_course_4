@@ -1,5 +1,4 @@
-from classes import Smartphone, LawnGrass, Category
-from product import Product
+from classes import Smartphone, LawnGrass, Category, Product
 
 
 if __name__ == '__main__':
@@ -79,11 +78,23 @@ if __name__ == '__main__':
     category_smartphones.add_product(smartphone3)
 
     print(category_smartphones.products)
-
     print(Category.product_count)
 
     try:
         category_smartphones.add_product("Not a product")
+    except TypeError:
+        print("Возникла ошибка TypeError при добавлении не продукта")
+    else:
+        print("Не возникла ошибка TypeError при добавлении не продукта")
+
+    new_smartphone = Smartphone("Google Pixel 8", "128GB, Black", 70000.0, 10,
+                                96.5, "Pixel 8", 128, "Black")
+
+    category_smartphones.add_product(new_smartphone)
+    print(category_smartphones.products)
+
+    try:
+        category_smartphones.add_product("Not a product")  # This should raise an error
     except TypeError:
         print("Возникла ошибка TypeError при добавлении не продукта")
     else:
