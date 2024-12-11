@@ -1,6 +1,6 @@
 import unittest
 
-from src.classes import Category, Product, Smartphone, LawnGrass
+from src.classes import Category, LawnGrass, Product, Smartphone
 
 
 class TestProductCategory(unittest.TestCase):
@@ -26,8 +26,8 @@ class TestProductCategory(unittest.TestCase):
                                          "дополнительных функций для удобства жизни", [product1, product2, product3])
 
         assert category.name == "Смартфоны"
-        assert category.description == ("Смартфоны, как средство не только коммуникации, но и получения дополнительных "
-                                        "функций для удобства жизни")
+        assert category.description == ("Смартфоны, как средство не только коммуникации, но и получения "
+                                        "дополнительных функций для удобства жизни")
         assert len(category._products) == 3  # Проверка количества продуктов в категории
         assert Category.category_count == 1  # Проверка общего количества категорий
         assert Category.product_count == 3  # Проверка общего количества продуктов
@@ -189,6 +189,29 @@ class TestProductCategory(unittest.TestCase):
                           "Россия", "7 дней", "Зеленый")
         with self.assertRaises(TypeError):
             _ = smartphone + grass
+
+
+def test_product_repr():
+    """Проверяем, что строковое представление объекта product соответствует ожидаемому формату"""
+    product = Product("Тестовый продукт", "Описание продукта", 100.0, 10)
+    assert repr(product) == "Product(name=Тестовый продукт, description=Описание продукта, price=100.0, quantity=10)"
+
+
+def test_smartphone_repr():
+    """Проверяем, что строковое представление объекта smartphone соответствует ожидаемому формату"""
+    smartphone = Smartphone("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
+                            180000.0, 5, 95.5, "S23 Ultra", 256, "Серый")
+    assert repr(smartphone) == ("Smartphone(name=Samsung Galaxy S23 Ultra, description=256GB, Серый цвет, "
+                                "200MP камера, price=180000.0, quantity=5, efficiency=95.5, model=S23 Ultra, "
+                                "memory=256, color=Серый)")
+
+
+def test_lawn_grass_repr():
+    """Проверяем, что строковое представление объекта LawnGrass соответствует ожидаемому формату"""
+    grass = LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20,
+                      "Россия", "7 дней", "Зеленый")
+    assert repr(grass) == ("LawnGrass(name=Газонная трава, description=Элитная трава для газона, price=500.0, "
+                           "quantity=20, country=Россия, germination_period=7 дней, color=Зеленый)")
 
 
 if __name__ == "__main__":

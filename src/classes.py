@@ -1,5 +1,32 @@
-class Product:
+from abc import ABC, abstractmethod
+
+
+class BaseProduct(ABC):
+    @abstractmethod
     def __init__(self, name: str, description: str, price: float, quantity: int):
+        self.name = name
+        self.description = description
+        self.price = price
+        self.quantity = quantity
+
+    @abstractmethod
+    def __repr__(self):
+        pass
+
+    @abstractmethod
+    def get_info(self):
+        pass
+
+
+class PrintMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print(f"{self.__class__.__name__} создан: {args}, {kwargs}")
+
+
+class Product(PrintMixin, BaseProduct):
+    def __init__(self, name: str, description: str, price: float, quantity: int):
+        super().__init__(name, description, price, quantity)
         """
         Инициализирует новый продукт.
 
@@ -21,6 +48,9 @@ class Product:
         """
         return (f"Product(name={self.name}, description={self.description}, price={self.price}, "
                 f"quantity={self.quantity})")
+
+    def get_info(self):
+        return f"{self.name}: {self.description}, Цена: {self.price}, Количество: {self.quantity}"
 
     @property
     def price(self):
@@ -86,6 +116,11 @@ class Smartphone(Product):
                 f"quantity={self.quantity}, efficiency={self.efficiency}, model={self.model}, "
                 f"memory={self.memory}, color={self.color})")
 
+    def get_info(self):
+        return (f"{self.name} ({self.model}): {self.description}, "
+                f"Цена: {self.price}, Количество: {self.quantity}, "
+                f"Эффективность: {self.efficiency}, Память: {self.memory}, Цвет: {self.color}")
+
 
 class LawnGrass(Product):
     def __init__(self, name: str, description: str, price: float, quantity: int,
@@ -99,6 +134,11 @@ class LawnGrass(Product):
         return (f"LawnGrass(name={self.name}, description={self.description}, price={self.price}, "
                 f"quantity={self.quantity}, country={self.country}, "
                 f"germination_period={self.germination_period}, color={self.color})")
+
+    def get_info(self):
+        return (f"{self.name}: {self.description}, "
+                f"Цена: {self.price}, Количество: {self.quantity}, "
+                f"Страна: {self.country}, Период прорастания: {self.germination_period}, Цвет: {self.color}")
 
 
 class Category:
