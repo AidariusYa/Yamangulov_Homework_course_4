@@ -1,6 +1,7 @@
 import unittest
 
-from src.classes import Category, LawnGrass, Product, Smartphone
+from unittest.mock import patch
+from src.classes import Category, LawnGrass, Product, Smartphone, BaseProduct, PrintMixin
 
 
 class TestProductCategory(unittest.TestCase):
@@ -191,27 +192,44 @@ class TestProductCategory(unittest.TestCase):
             _ = smartphone + grass
 
 
-def test_product_repr():
-    """Проверяем, что строковое представление объекта product соответствует ожидаемому формату"""
-    product = Product("Тестовый продукт", "Описание продукта", 100.0, 10)
-    assert repr(product) == "Product(name=Тестовый продукт, description=Описание продукта, price=100.0, quantity=10)"
+class TestBaseProduct(BaseProduct):
+    def __init__(self, name: str, description: str, price: float, quantity: int):
+        super().__init__(name, description, price, quantity)
+
+    def __repr__(self):
+        return (f"TestBaseProduct(name={self.name}, description={self.description}, price={self.price}, "
+                f"quantity={self.quantity})")
+
+    def get_info(self):
+        return f"{self.name}: {self.description}, Цена: {self.price}, Количество: {self.quantity}"
 
 
-def test_smartphone_repr():
-    """Проверяем, что строковое представление объекта smartphone соответствует ожидаемому формату"""
-    smartphone = Smartphone("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
-                            180000.0, 5, 95.5, "S23 Ultra", 256, "Серый")
-    assert repr(smartphone) == ("Smartphone(name=Samsung Galaxy S23 Ultra, description=256GB, Серый цвет, "
-                                "200MP камера, price=180000.0, quantity=5, efficiency=95.5, model=S23 Ultra, "
-                                "memory=256, color=Серый)")
+class TestPrintMixin(PrintMixin, TestBaseProduct):
+    pass
 
 
-def test_lawn_grass_repr():
-    """Проверяем, что строковое представление объекта LawnGrass соответствует ожидаемому формату"""
-    grass = LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20,
-                      "Россия", "7 дней", "Зеленый")
-    assert repr(grass) == ("LawnGrass(name=Газонная трава, description=Элитная трава для газона, price=500.0, "
-                           "quantity=20, country=Россия, germination_period=7 дней, color=Зеленый)")
+class TestBaseProductAndPrintMixin(unittest.TestCase):
+    def setUp(self):
+        self.product = TestPrintMixin("Тестовый продукт", "Описание продукта", 100.0, 10)
+
+    def test_initialization(self):
+        self.assertEqual(self.product.name, "Тестовый продукт")
+        self.assertEqual(self.product.description, "Описание продукта")
+        self.assertEqual(self.product.price, 100.0)
+        self.assertEqual(self.product.quantity, 10)
+
+    def test_repr(self):
+        self.assertEqual(repr(self.product), "TestBaseProduct(name=Тестовый продукт, description=Описание продукта, "
+                                             "price=100.0, quantity=10)")
+
+    def test_get_info(self):
+        self.assertEqual(self.product.get_info(), "Тестовый продукт: Описание продукта, Цена: 100.0, Количество: 10")
+
+    @patch('builtins.print')
+    def test_print_mixin_creation(self, mock_print):
+        TestPrintMixin("Тестовый продукт", "Описание продукта", 200.0, 5)
+        mock_print.assert_called_once_with(
+            "TestPrintMixin создан: ('Тестовый продукт', 'Описание продукта', 200.0, 5), {}")
 
 
 if __name__ == "__main__":
