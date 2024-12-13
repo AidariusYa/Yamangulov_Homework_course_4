@@ -26,6 +26,8 @@ class PrintMixin:
 
 class Product(PrintMixin, BaseProduct):
     def __init__(self, name: str, description: str, price: float, quantity: int):
+        if quantity <= 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен.")
         super().__init__(name, description, price, quantity)
         """
         Инициализирует новый продукт.
@@ -190,3 +192,19 @@ class Category:
         """Уменьшает счетчики категорий и продуктов при удалении экземпляра категории."""
         Category.category_count -= 1
         Category.product_count -= self.product_count  # Уменьшаем общее количество продуктов
+
+    def middle_price(self):
+        """
+        Возвращает среднюю цену всех продуктов в категории.
+        :return: Средняя цена или 0, если продуктов нет.
+        """
+        try:
+            if not self._products:
+                return 0  # Если нет продуктов, возвращаем 0
+
+            total_price = sum(product.price for product in self._products)
+            average_price = total_price / len(self._products)
+            return average_price
+
+        except ZeroDivisionError:
+            return 0  # На всякий случай, если возникнет деление на ноль
