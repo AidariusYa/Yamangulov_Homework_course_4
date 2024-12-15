@@ -1,13 +1,9 @@
 import unittest
 from unittest.mock import patch
 
-from src.classes import (
-    Category,
-    LawnGrass,
-    PrintMixin,
-    Product,
-    Smartphone,
-)
+import pytest
+
+from src.classes import Category, LawnGrass, PrintMixin, Product, Smartphone
 
 
 class TestProductCategory(unittest.TestCase):
@@ -315,6 +311,27 @@ class TestPrintMixin(unittest.TestCase):
 
         # Проверяем, что print был вызван с правильными аргументами
         mock_print.assert_called_once_with("TestClass создан: (1, 2), {'key': 'value'}")
+
+
+def test_product_creation_with_zero_quantity():
+    with pytest.raises(
+        ValueError, match="Товар с нулевым количеством не может быть добавлен."
+    ):
+        Product("Тестовый товар", "Описание", 100.0, 0)
+
+
+def test_middle_price_with_no_products():
+    category = Category("Пустая категория", "Описание пустой категории", [])
+    assert category.middle_price() == 0
+
+
+def test_middle_price_with_products():
+    product1 = Product("Товар 1", "Описание 1", 100.0, 5)
+    product2 = Product("Товар 2", "Описание 2", 200.0, 10)
+    category = Category(
+        "Категория с товарами", "Описание категории", [product1, product2]
+    )
+    assert category.middle_price() == 150.0  # (100 + 200) / 2
 
 
 if __name__ == "__main__":
