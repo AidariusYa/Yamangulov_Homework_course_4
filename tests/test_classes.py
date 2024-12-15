@@ -1,17 +1,23 @@
 import unittest
+from unittest.mock import patch
 
-from src.classes import Category, Product, Smartphone, LawnGrass
+import pytest
+
+from src.classes import Category, LawnGrass, PrintMixin, Product, Smartphone
 
 
 class TestProductCategory(unittest.TestCase):
     """Тестовый класс для проверки функциональности классов Product и его подклассов и Category"""
+
     def setUp(self):
         """Сбрасываем счетчик перед каждым тестом"""
         Category.product_count = 0
 
     def test_product_initialization(self):
         """Проверка корректности инициализации продукта"""
-        product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+        product = Product(
+            "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+        )
         assert product.name == "Samsung Galaxy S23 Ultra"
         assert product.description == "256GB, Серый цвет, 200MP камера"
         assert product.price == 180000.0
@@ -19,52 +25,84 @@ class TestProductCategory(unittest.TestCase):
 
     def test_category_initialization(self):
         """Проверка корректности инициализации категории"""
-        product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+        product1 = Product(
+            "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+        )
         product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
         product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
-        category = Category("Смартфоны", "Смартфоны, как средство не только коммуникации, но и получения "
-                                         "дополнительных функций для удобства жизни", [product1, product2, product3])
+        category = Category(
+            "Смартфоны",
+            "Смартфоны, как средство не только коммуникации, но и получения "
+            "дополнительных функций для удобства жизни",
+            [product1, product2, product3],
+        )
 
         assert category.name == "Смартфоны"
-        assert category.description == ("Смартфоны, как средство не только коммуникации, но и получения дополнительных "
-                                        "функций для удобства жизни")
+        assert category.description == (
+            "Смартфоны, как средство не только коммуникации, но и получения "
+            "дополнительных функций для удобства жизни"
+        )
         assert len(category._products) == 3  # Проверка количества продуктов в категории
         assert Category.category_count == 1  # Проверка общего количества категорий
         assert Category.product_count == 3  # Проверка общего количества продуктов
 
     def test_product_count_in_category(self):
         """Проверка количества продуктов в категории"""
-        product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+        product1 = Product(
+            "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+        )
         product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
         product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
-        category = Category("Смартфоны", "Смартфоны, как средство не только коммуникации, но и получения "
-                                         "дополнительных функций для удобства жизни", [product1, product2, product3])
+        category = Category(
+            "Смартфоны",
+            "Смартфоны, как средство не только коммуникации, но и получения "
+            "дополнительных функций для удобства жизни",
+            [product1, product2, product3],
+        )
         assert category.product_count == 3
 
     def test_multiple_categories(self):
         """Проверка количества категорий"""
-        product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+        product1 = Product(
+            "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+        )
         product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
         product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
-        category1 = Category("Смартфоны", "Смартфоны, как средство не только коммуникации, но и получения "
-                                          "дополнительных функций для удобства жизни", [product1, product2, product3])
+        category1 = Category(
+            "Смартфоны",
+            "Смартфоны, как средство не только коммуникации, но и получения "
+            "дополнительных функций для удобства жизни",
+            [product1, product2, product3],
+        )
 
-        product4 = Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
-        category2 = Category("Телевизоры", "Современный телевизор, который позволяет наслаждаться просмотром, "
-                                           "станет вашим другом и помощником", [product4])
+        product4 = Product('55" QLED 4K', "Фоновая подсветка", 123000.0, 7)
+        category2 = Category(
+            "Телевизоры",
+            "Современный телевизор, который позволяет наслаждаться просмотром, "
+            "станет вашим другом и помощником",
+            [product4],
+        )
 
         assert Category.category_count == 2  # Проверка общего количества категорий
         assert Category.product_count == 4  # Проверка общего количества продуктов
-        assert category1.product_count == 3  # Проверка количества продуктов в первой категории
-        assert category2.product_count == 1  # Проверка количества продуктов во второй категории
+        assert (
+            category1.product_count == 3
+        )  # Проверка количества продуктов в первой категории
+        assert (
+            category2.product_count == 1
+        )  # Проверка количества продуктов во второй категории
 
     def test_add_product(self):
         """Проверяет добавление продукта в категорию."""
         category = Category("Тестовая категория", "Описание категории")
         product = Product("Тестовый продукт", "Описание продукта", 100.0, 10)
-        self.assertEqual(category.product_count, 0)  # Используем геттер для получения продуктов
+        self.assertEqual(
+            category.product_count, 0
+        )  # Используем геттер для получения продуктов
         category.add_product(product)  # Добавляем продукт в категорию
-        self.assertEqual(Category.product_count, 1)  # Проверяем, что общее количество продуктов на уровне
+        self.assertEqual(
+            Category.product_count, 1
+        )  # Проверяем, что общее количество продуктов на уровне
         # класса увеличилось на 1
 
     def test_products_getter(self):
@@ -90,7 +128,7 @@ class TestProductCategory(unittest.TestCase):
             "name": "Тестовый продукт",
             "description": "Описание тестового продукта",
             "price": 150.0,
-            "quantity": 20
+            "quantity": 20,
         }
         product = Product.new_product(product_data)
         self.assertEqual(product.name, "Тестовый продукт")
@@ -114,8 +152,12 @@ class TestProductCategory(unittest.TestCase):
         """Проверяет строковое представление категории"""
         product1 = Product("Тестовый продукт 1", "Описание продукта 1", 100.0, 10)
         product2 = Product("Тестовый продукт 2", "Описание продукта 2", 200.0, 5)
-        category = Category("Тестовая категория", "Описание категории", [product1, product2])
-        self.assertEqual(str(category), "Тестовая категория, количество продуктов: 15 шт.")
+        category = Category(
+            "Тестовая категория", "Описание категории", [product1, product2]
+        )
+        self.assertEqual(
+            str(category), "Тестовая категория, количество продуктов: 15 шт."
+        )
 
     def test_product_addition(self):
         """Проверяет сложение двух продуктов"""
@@ -128,15 +170,30 @@ class TestProductCategory(unittest.TestCase):
 
     def test_smartphone_initialization(self):
         """Тестирует инициализацию объекта класса Smartphone"""
-        smartphone = Smartphone("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
-                                180000.0, 5, 95.5, "S23 Ultra", 256, "Серый")
+        smartphone = Smartphone(
+            "Samsung Galaxy S23 Ultra",
+            "256GB, Серый цвет, 200MP камера",
+            180000.0,
+            5,
+            95.5,
+            "S23 Ultra",
+            256,
+            "Серый",
+        )
         self.assertEqual(smartphone.name, "Samsung Galaxy S23 Ultra")
         self.assertEqual(smartphone.efficiency, 95.5)
 
     def test_lawn_grass_initialization(self):
         """Тестирует инициализацию объекта класса LawnGrass"""
-        grass = LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20,
-                          "Россия", "7 дней", "Зеленый")
+        grass = LawnGrass(
+            "Газонная трава",
+            "Элитная трава для газона",
+            500.0,
+            20,
+            "Россия",
+            "7 дней",
+            "Зеленый",
+        )
         self.assertEqual(grass.country, "Россия")
         self.assertEqual(grass.germination_period, "7 дней")
 
@@ -156,39 +213,125 @@ class TestProductCategory(unittest.TestCase):
     def test_add_smartphone(self):
         """Проверяет добавление смартфона в категорию."""
         category = Category("Смартфоны", "Описание категории")
-        smartphone = Smartphone("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
-                                180000.0, 5, 95.5, "S23 Ultra", 256, "Серый")
+        smartphone = Smartphone(
+            "Samsung Galaxy S23 Ultra",
+            "256GB, Серый цвет, 200MP камера",
+            180000.0,
+            5,
+            95.5,
+            "S23 Ultra",
+            256,
+            "Серый",
+        )
         category.add_product(smartphone)  # Добавляем смартфон в категорию
-        self.assertEqual(Category.product_count, 1)  # Проверяем, что общее количество продуктов увеличилось на 1
+        self.assertEqual(
+            Category.product_count, 1
+        )  # Проверяем, что общее количество продуктов увеличилось на 1
 
     def test_smartphone_addition(self):
         """Проверяет сложение двух смартфонов."""
-        smartphone1 = Smartphone("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
-                                 180000.0, 5, 95.5, "S23 Ultra", 256, "Серый")
-        smartphone2 = Smartphone("Iphone 15", "512GB, Gray space", 210000.0, 8,
-                                 98.2, "15", 512, "Gray space")
+        smartphone1 = Smartphone(
+            "Samsung Galaxy S23 Ultra",
+            "256GB, Серый цвет, 200MP камера",
+            180000.0,
+            5,
+            95.5,
+            "S23 Ultra",
+            256,
+            "Серый",
+        )
+        smartphone2 = Smartphone(
+            "Iphone 15", "512GB, Gray space", 210000.0, 8, 98.2, "15", 512, "Gray space"
+        )
         total_value = smartphone1 + smartphone2
-        expected_value = (smartphone1.price * smartphone1.quantity) + (smartphone2.price * smartphone2.quantity)
+        expected_value = (smartphone1.price * smartphone1.quantity) + (
+            smartphone2.price * smartphone2.quantity
+        )
         self.assertEqual(total_value, expected_value)
 
     def test_lawn_grass_addition(self):
         """Проверяет сложение двух газонов."""
-        grass1 = LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20,
-                           "Россия", "7 дней", "Зеленый")
-        grass2 = LawnGrass("Газонная трава 2", "Выносливая трава", 450.0, 15,
-                           "США", "5 дней", "Темно-зеленый")
+        grass1 = LawnGrass(
+            "Газонная трава",
+            "Элитная трава для газона",
+            500.0,
+            20,
+            "Россия",
+            "7 дней",
+            "Зеленый",
+        )
+        grass2 = LawnGrass(
+            "Газонная трава 2",
+            "Выносливая трава",
+            450.0,
+            15,
+            "США",
+            "5 дней",
+            "Темно-зеленый",
+        )
         total_value = grass1 + grass2
-        expected_value = (grass1.price * grass1.quantity) + (grass2.price * grass2.quantity)
+        expected_value = (grass1.price * grass1.quantity) + (
+            grass2.price * grass2.quantity
+        )
         self.assertEqual(total_value, expected_value)
 
     def test_invalid_addition(self):
         """Проверяет, что нельзя сложить смартфон и газонную траву."""
-        smartphone = Smartphone("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
-                                180000.0, 5, 95.5, "S23 Ultra", 256, "Серый")
-        grass = LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20,
-                          "Россия", "7 дней", "Зеленый")
+        smartphone = Smartphone(
+            "Samsung Galaxy S23 Ultra",
+            "256GB, Серый цвет, 200MP камера",
+            180000.0,
+            5,
+            95.5,
+            "S23 Ultra",
+            256,
+            "Серый",
+        )
+        grass = LawnGrass(
+            "Газонная трава",
+            "Элитная трава для газона",
+            500.0,
+            20,
+            "Россия",
+            "7 дней",
+            "Зеленый",
+        )
         with self.assertRaises(TypeError):
             _ = smartphone + grass
+
+
+class TestPrintMixin(unittest.TestCase):
+    @patch("builtins.print")
+    def test_print_mixin_initialization(self, mock_print):
+        # Создаем экземпляр класса, который использует PrintMixin
+        class TestClass(PrintMixin):
+            pass
+
+        instance = TestClass(1, 2, key="value")
+
+        # Проверяем, что print был вызван с правильными аргументами
+        mock_print.assert_called_once_with("TestClass создан: (1, 2), {'key': 'value'}")
+
+
+def test_product_creation_with_zero_quantity():
+    with pytest.raises(
+        ValueError, match="Товар с нулевым количеством не может быть добавлен."
+    ):
+        Product("Тестовый товар", "Описание", 100.0, 0)
+
+
+def test_middle_price_with_no_products():
+    category = Category("Пустая категория", "Описание пустой категории", [])
+    assert category.middle_price() == 0
+
+
+def test_middle_price_with_products():
+    product1 = Product("Товар 1", "Описание 1", 100.0, 5)
+    product2 = Product("Товар 2", "Описание 2", 200.0, 10)
+    category = Category(
+        "Категория с товарами", "Описание категории", [product1, product2]
+    )
+    assert category.middle_price() == 150.0  # (100 + 200) / 2
 
 
 if __name__ == "__main__":
