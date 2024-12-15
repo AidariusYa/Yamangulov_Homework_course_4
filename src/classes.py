@@ -3,13 +3,6 @@ from abc import ABC, abstractmethod
 
 class BaseProduct(ABC):
     @abstractmethod
-    def __init__(self, name: str, description: str, price: float, quantity: int):
-        self.name = name
-        self.description = description
-        self.price = price
-        self.quantity = quantity
-
-    @abstractmethod
     def __repr__(self):
         pass
 
@@ -20,7 +13,6 @@ class BaseProduct(ABC):
 
 class PrintMixin:
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         print(f"{self.__class__.__name__} создан: {args}, {kwargs}")
 
 
@@ -48,8 +40,10 @@ class Product(PrintMixin, BaseProduct):
 
         :return: Строка с информацией о продукте.
         """
-        return (f"Product(name={self.name}, description={self.description}, price={self.price}, "
-                f"quantity={self.quantity})")
+        return (
+            f"Product(name={self.name}, description={self.description}, price={self.price}, "
+            f"quantity={self.quantity})"
+        )
 
     def get_info(self):
         return f"{self.name}: {self.description}, Цена: {self.price}, Количество: {self.quantity}"
@@ -88,7 +82,7 @@ class Product(PrintMixin, BaseProduct):
             name=product_data["name"],
             description=product_data["description"],
             price=product_data["price"],
-            quantity=product_data["quantity"]
+            quantity=product_data["quantity"],
         )
 
     def __add__(self, other):
@@ -105,8 +99,17 @@ class Product(PrintMixin, BaseProduct):
 
 
 class Smartphone(Product):
-    def __init__(self, name: str, description: str, price: float, quantity: int,
-                 efficiency: float, model: str, memory: int, color: str):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        efficiency: float,
+        model: str,
+        memory: int,
+        color: str,
+    ):
         super().__init__(name, description, price, quantity)
         self.efficiency = efficiency
         self.model = model
@@ -114,38 +117,54 @@ class Smartphone(Product):
         self.color = color
 
     def __repr__(self):
-        return (f"Smartphone(name={self.name}, description={self.description}, price={self.price}, "
-                f"quantity={self.quantity}, efficiency={self.efficiency}, model={self.model}, "
-                f"memory={self.memory}, color={self.color})")
+        return (
+            f"Smartphone(name={self.name}, description={self.description}, price={self.price}, "
+            f"quantity={self.quantity}, efficiency={self.efficiency}, model={self.model}, "
+            f"memory={self.memory}, color={self.color})"
+        )
 
     def get_info(self):
-        return (f"{self.name} ({self.model}): {self.description}, "
-                f"Цена: {self.price}, Количество: {self.quantity}, "
-                f"Эффективность: {self.efficiency}, Память: {self.memory}, Цвет: {self.color}")
+        return (
+            f"{self.name} ({self.model}): {self.description}, "
+            f"Цена: {self.price}, Количество: {self.quantity}, "
+            f"Эффективность: {self.efficiency}, Память: {self.memory}, Цвет: {self.color}"
+        )
 
 
 class LawnGrass(Product):
-    def __init__(self, name: str, description: str, price: float, quantity: int,
-                 country: str, germination_period: str, color: str):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: str,
+        color: str,
+    ):
         super().__init__(name, description, price, quantity)
         self.country = country
         self.germination_period = germination_period
         self.color = color
 
     def __repr__(self):
-        return (f"LawnGrass(name={self.name}, description={self.description}, price={self.price}, "
-                f"quantity={self.quantity}, country={self.country}, "
-                f"germination_period={self.germination_period}, color={self.color})")
+        return (
+            f"LawnGrass(name={self.name}, description={self.description}, price={self.price}, "
+            f"quantity={self.quantity}, country={self.country}, "
+            f"germination_period={self.germination_period}, color={self.color})"
+        )
 
     def get_info(self):
-        return (f"{self.name}: {self.description}, "
-                f"Цена: {self.price}, Количество: {self.quantity}, "
-                f"Страна: {self.country}, Период прорастания: {self.germination_period}, Цвет: {self.color}")
+        return (
+            f"{self.name}: {self.description}, "
+            f"Цена: {self.price}, Количество: {self.quantity}, "
+            f"Страна: {self.country}, Период прорастания: {self.germination_period}, Цвет: {self.color}"
+        )
 
 
 class Category:
     category_count = 0  # Статический атрибут для общего количества категорий
-    product_count = 0   # Статический атрибут для общего количества продуктов
+    product_count = 0  # Статический атрибут для общего количества продуктов
 
     def __init__(self, name: str, description: str, products: list = None):
         """
@@ -157,10 +176,16 @@ class Category:
         """
         self.name = name
         self.description = description
-        self._products = products if products is not None else []  # Приватный атрибут для списка продуктов
-        self.product_count = len(self._products)  # Локальный атрибут для количества продуктов в данной категории
+        self._products = (
+            products if products is not None else []
+        )  # Приватный атрибут для списка продуктов
+        self.product_count = len(
+            self._products
+        )  # Локальный атрибут для количества продуктов в данной категории
         Category.category_count += 1
-        Category.product_count += self.product_count  # Увеличиваем общее количество продуктов
+        Category.product_count += (
+            self.product_count
+        )  # Увеличиваем общее количество продуктов
 
     def add_product(self, product):
         """
@@ -181,7 +206,11 @@ class Category:
         :return: Строка с информацией о продуктах.
         """
         return ", ".join(
-            [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт." for product in self._products])
+            [
+                f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт."
+                for product in self._products
+            ]
+        )
 
     def __str__(self):
         """Возвращает строковое представление категории."""
@@ -191,7 +220,9 @@ class Category:
     def __del__(self):
         """Уменьшает счетчики категорий и продуктов при удалении экземпляра категории."""
         Category.category_count -= 1
-        Category.product_count -= self.product_count  # Уменьшаем общее количество продуктов
+        Category.product_count -= (
+            self.product_count
+        )  # Уменьшаем общее количество продуктов
 
     def middle_price(self):
         """
