@@ -195,20 +195,37 @@ class TestProductCategory(unittest.TestCase):
             _ = smartphone + grass
 
 
-class TestBaseProduct(BaseProduct):
-    def __init__(self, name: str, description: str, price: float, quantity: int):
-        super().__init__(name, description, price, quantity)
+class TestBaseProduct(unittest.TestCase):
+    def setUp(self):
+        self.product = TestPrintMixin("Тестовый продукт", "Описание продукта", 100.0, 10)
 
+    def test_initialization(self):
+        self.assertEqual(self.product.name, "Тестовый продукт")
+        self.assertEqual(self.product.description, "Описание продукта")
+        self.assertEqual(self.product.price, 100.0)
+        self.assertEqual(self.product.quantity, 10)
+
+    def test_repr(self):
+        self.assertEqual(repr(self.product), "TestBaseProduct(name=Тестовый продукт, description=Описание продукта, "
+                                             "price=100.0, quantity=10)")
+
+    def test_get_info(self):
+        self.assertEqual(self.product.get_info(), "Тестовый продукт: Описание продукта, Цена: 100.0, Количество: 10")
+
+    @patch('builtins.print')
+    def test_print_mixin_creation(self, mock_print):
+        TestPrintMixin("Тестовый продукт", "Описание продукта", 200.0, 5)
+        mock_print.assert_called_once_with(
+            "TestPrintMixin создан: ('Тестовый продукт', 'Описание продукта', 200.0, 5), {}")
+
+
+class TestPrintMixin(PrintMixin, BaseProduct):
     def __repr__(self):
         return (f"TestBaseProduct(name={self.name}, description={self.description}, price={self.price}, "
                 f"quantity={self.quantity})")
 
     def get_info(self):
         return f"{self.name}: {self.description}, Цена: {self.price}, Количество: {self.quantity}"
-
-
-class TestPrintMixin(PrintMixin, TestBaseProduct):
-    pass
 
 
 class TestBaseProductAndPrintMixin(unittest.TestCase):
