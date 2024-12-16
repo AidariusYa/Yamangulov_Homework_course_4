@@ -23,3 +23,9 @@ pytest = "^8.3.3"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.coverage.report]
+exclude_also = [
+    "if __name__ == .__main__.:",
+    "@(abc\\.)?abstractmethod",
+]
